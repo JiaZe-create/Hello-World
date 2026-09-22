@@ -16,9 +16,9 @@ create policy "Public course catalog" on public.courses
   for select to anon, authenticated using (true);
 
 insert into public.courses (code, title, description) values
-  ('CS101', 'Introduction to Programming', 'Learn variables, loops, functions, and problem solving.'),
-  ('CS201', 'Data Structures', 'Explore linked lists, stacks, queues, trees, and graphs.'),
-  ('MATH201', 'Linear Algebra', 'Study vectors, matrices, linear maps, and eigenvalues.')
+  ('HUM101', 'Why Do We Laugh?', 'Examine the social, cultural, and psychological ideas behind laughter and comic timing.'),
+  ('HUM201', 'The Craft of Comedy', 'Study setup, surprise, wordplay, parody, and the structure of a memorable joke.'),
+  ('HUM301', 'Satire and Social Commentary', 'Analyze how humor can question assumptions, challenge power, and connect audiences across cultures.')
 on conflict (code) do nothing;
 
 commit;

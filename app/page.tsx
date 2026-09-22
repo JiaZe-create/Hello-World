@@ -14,9 +14,9 @@ export default async function Home() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-6 py-16 sm:py-24">
-      <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Course catalog</p>
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Explore the courses</h1>
-      <p className="mt-5 max-w-xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">A place to discover your next subject.</p>
+      <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Humor studies</p>
+      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Explore the comedy catalog</h1>
+      <p className="mt-5 max-w-xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">Study why jokes work, how comedy travels across cultures, and what laughter reveals about us.</p>
       {failed ? (
         <div role="alert" className="mt-10 rounded-2xl border border-amber-300 bg-amber-50 p-6 text-amber-950">
           <h2 className="font-semibold">Courses are temporarily unavailable</h2>
