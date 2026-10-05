@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Humor Studies",
-  description: "Explore the course catalog.",
+  title: "Off Campus — AI captions, NYC energy",
+  description: "Turn campus chaos into AI captions. Vote, remix, and find your next group-chat favorite.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
