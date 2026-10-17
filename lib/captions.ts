@@ -2,16 +2,20 @@ import 'server-only';
 import { createClient } from './supabase/server';
 import { dailyPrompt, type Caption } from './caption-shared';
 export const FIELDS = 'id,scene,prompt,style,daily_key,caption,model,created_at,remix_of,upvotes,downvotes,score';
-export async function getFeed(filter: string, page: number, userId?: string) {
+export async function getFeed(filter: string, page: number, userId?: string, tone?: string) {
   const db = await createClient();
-  let query = db.from('generations').select(FIELDS).eq('status','complete');
+  if (filter === 'liked' && !userId) throw new Error('Sign in to view liked captions.');
+  const fields = filter === 'liked' ? `${FIELDS},caption_votes!inner(user_id,value)` : FIELDS;
+  let query = db.from('generations').select(fields).eq('status','complete');
+  if (filter === 'liked') query = query.eq('caption_votes.user_id', userId!).eq('caption_votes.value', 1);
+  if (tone) query = query.eq('style', tone);
   if (filter==='today') query=query.eq('daily_key',dailyPrompt().key);
   if (filter==='week') query=query.gte('created_at',new Date(Date.now()-7*86400000).toISOString()).order('score',{ascending:false});
   if (filter==='mine' && userId) query=query.eq('user_id',userId);
   query=query.order('created_at',{ascending:false}).order('id').range(page*12,page*12+12);
   const { data, error } = await query;
   if(error) throw new Error('Could not load the caption feed.');
-  const captions=(data??[]) as Caption[];
+  const captions=(data??[]) as unknown as Caption[];
   const more=captions.length>12; captions.splice(12);
   const votes: Record<string,number> = {};
   if(userId && captions.length) {
