@@ -19,7 +19,7 @@ export async function generateCaption(prompt: string, config: NonNullable<Return
     model: config.model, prompt,
     maxOutputTokens: 512, maxRetries: 1,
     abortSignal: AbortSignal.timeout(25000),
-    providerOptions: { google: { thinkingConfig: { thinkingLevel: 'minimal' } } },
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: 'low' } } },
   });
   return { caption: result.text.trim(), input_tokens: result.usage.inputTokens ?? 0, output_tokens: result.usage.outputTokens ?? 0 };
 }
