@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { STYLES, UUID, dailyPrompt, type CaptionStyle } from '@/lib/caption-shared';
 import { aiConfig, captionPrompt, generateCaption } from '@/lib/ai/captions';
+import { captionFailure } from '@/lib/ai/errors';
 
 export async function createCaption(form: FormData): Promise<{ id?: string; error?: string }> {
   const db = await createClient();
@@ -29,9 +30,13 @@ export async function createCaption(form: FormData): Promise<{ id?: string; erro
   }
   let result;
   try { result = await generateCaption(prompt, config); }
-  catch {
-    await db.from('generations').update({status:'failed'}).eq('id',id).eq('user_id',user.id);
-    return { error:'The AI service could not finish this caption. Your prompt is saved under Recent unfinished requests below. Please try again shortly.' };
+  catch (error) {
+    const failure=captionFailure(error);
+    // Log only allowlisted diagnostics, never the raw error, API key or prompt.
+    console.error('caption_generation_failed', {requestId:id, code:failure.code, status:failure.status});
+    const {error:saveError}=await db.from('generations').update({status:'failed'}).eq('id',id).eq('user_id',user.id);
+    revalidatePath('/lab');
+    return {error:`${failure.message} ${saveError?'Your request was saved, but its status could not refresh.':'Your prompt is saved under Recent unfinished requests.'} Reference: ${failure.code} / ${id.slice(0,8)}.`};
   }
   const complete = result.caption.length > 0 && result.caption.length <= 400;
   // Persist the exact output, including an invalid response, for the owner.
